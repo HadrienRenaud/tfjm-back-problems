@@ -1,9 +1,8 @@
-var express = require('express');
-var path = require('path');
-var config = require('./config.js');
+const express = require('express');
+const path = require('path');
 
-var indexRouter = require('./routes/index');
-var app = express();
+const indexRouter = require('./routes/index');
+const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
