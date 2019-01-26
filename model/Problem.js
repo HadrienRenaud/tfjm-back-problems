@@ -40,7 +40,7 @@ class Problem {
 
     static getTexById(id) {
         return knex.select('*').from('problems').where('id', '=', id)
-            .map((row) => row.pdf)
+            .map((row) => row.tex)
             .then(result => {
                 if (result.length > 0)
                     return result[0];
@@ -51,7 +51,7 @@ class Problem {
 
     static getMediasById(id) {
         return knex.select('*').from('problems').where('id', '=', id)
-            .map((row) => row.pdf)
+            .map((row) => row.medias)
             .then(result => {
                 if (result.length > 0)
                     return result[0];
