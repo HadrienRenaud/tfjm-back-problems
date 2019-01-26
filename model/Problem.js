@@ -27,6 +27,39 @@ class Problem {
             });
     }
 
+    static getPdfById(id) {
+        return knex.select('*').from('problems').where('id', '=', id)
+            .map((row) => row.pdf)
+            .then(result => {
+                if (result.length > 0)
+                    return result[0];
+                else
+                    return false
+            });
+    }
+
+    static getTexById(id) {
+        return knex.select('*').from('problems').where('id', '=', id)
+            .map((row) => row.pdf)
+            .then(result => {
+                if (result.length > 0)
+                    return result[0];
+                else
+                    return false
+            });
+    }
+
+    static getMediasById(id) {
+        return knex.select('*').from('problems').where('id', '=', id)
+            .map((row) => row.pdf)
+            .then(result => {
+                if (result.length > 0)
+                    return result[0];
+                else
+                    return false
+            });
+    }
+
     static getAll() {
         return knex.select('*').from('problems').map(
             (row) => new Problem(row.id, row.name, row.description, row.pdf, row.tex, row.medias));
