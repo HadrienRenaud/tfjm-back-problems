@@ -17,13 +17,24 @@ class Problem {
     }
 
     static getById(id) {
-        return knex.select('*').from('problems').where('id', '=', id).map(
-            (row) => new Problem(row.id, row.name, row.description, row.pdf, row.tex, row.medias));
+        return knex.select('*').from('problems').where('id', '=', id)
+            .map((row) => new Problem(row.id, row.name, row.description, row.pdf, row.tex, row.medias))
+            .then(result => {
+                if (result.length > 0)
+                    return result[0];
+                else
+                    return false
+            });
     }
 
     static getAll() {
         return knex.select('*').from('problems').map(
             (row) => new Problem(row.id, row.name, row.description, row.pdf, row.tex, row.medias));
+    }
+
+    static getAllRestricted() {
+        return knex.select('id', 'name', 'description').from('problems').map(
+            (row) => new Problem(row.id, row.name, row.description));
     }
 
     static getByTag(tagId) {
@@ -32,10 +43,27 @@ class Problem {
             .where('problem_has_tag.fk_tag', '=', tagId)
     }
 
+    static getFullById(id) {
+        return Problem.getById(id)
+            .then(result => {
+                if (result) {
+                    return knex.select({ tagId: "tag.id", tagName: "tag.name", })
+                        .from('problem_has_tag').innerJoin('tag', 'problem_has_tag.fk_tag', 'tag.id')
+                        .where('problem_has_tag.fk_problem', '=', result.id)
+                        .then(rows => {
+                            rows.forEach(row => result.addTag(new Tag(row.tagId, row.tagName)));
+                            return result;
+                        })
+                } else return false
+            })
+    }
+
     static getFullAll() {
-        return Problem.getAll().then((probs) => {
+        return Problem.getAllRestricted().then((probs) => {
             let result = [];
-            probs.forEach(pb => {result[pb.id] = pb});
+            probs.forEach(pb => {
+                result[pb.id] = pb
+            });
             return knex.select({
                 tagId: "tag.id",
                 tagName: "tag.name",
