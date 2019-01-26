@@ -7,23 +7,14 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
--- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
-DROP SCHEMA IF EXISTS `mydb` ;
+USE `tfjmprob` ;
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Table `tfjmprob`.`tag`
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
-USE `mydb` ;
+DROP TABLE IF EXISTS `tfjmprob`.`tag` ;
 
--- -----------------------------------------------------
--- Table `mydb`.`tag`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`tag` ;
-
-CREATE TABLE IF NOT EXISTS `mydb`.`tag` (
+CREATE TABLE IF NOT EXISTS `tfjmprob`.`tag` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
@@ -31,11 +22,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`problems`
+-- Table `tfjmprob`.`problems`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`problems` ;
+DROP TABLE IF EXISTS `tfjmprob`.`problems` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`problems` (
+CREATE TABLE IF NOT EXISTS `tfjmprob`.`problems` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   `description` VARCHAR(100) NULL,
@@ -47,11 +38,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`problem_has_tag`
+-- Table `tfjmprob`.`problem_has_tag`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`problem_has_tag` ;
+DROP TABLE IF EXISTS `tfjmprob`.`problem_has_tag` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`problem_has_tag` (
+CREATE TABLE IF NOT EXISTS `tfjmprob`.`problem_has_tag` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `fk_tag` INT UNSIGNED NOT NULL,
   `fk_problem` INT UNSIGNED NOT NULL,
@@ -60,12 +51,12 @@ CREATE TABLE IF NOT EXISTS `mydb`.`problem_has_tag` (
   INDEX `fk_problem_has_tag_problems1_idx` (`fk_problem` ASC),
   CONSTRAINT `fk_problem_has_tag_tag`
     FOREIGN KEY (`fk_tag`)
-    REFERENCES `mydb`.`tag` (`id`)
+    REFERENCES `tfjmprob`.`tag` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_problem_has_tag_problems1`
     FOREIGN KEY (`fk_problem`)
-    REFERENCES `mydb`.`problems` (`id`)
+    REFERENCES `tfjmprob`.`problems` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
