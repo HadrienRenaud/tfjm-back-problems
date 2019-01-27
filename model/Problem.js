@@ -27,6 +27,17 @@ class Problem {
             });
     }
 
+    static getRestrictedById(id) {
+        return knex.select('*').from('problems').where('id', '=', id)
+            .map((row) => new Problem(row.id, row.name, row.description))
+            .then(result => {
+                if (result.length > 0)
+                    return result[0];
+                else
+                    return false
+            });
+    }
+
     static getPdfById(id) {
         return knex.select('*').from('problems').where('id', '=', id)
             .map((row) => row.pdf)
@@ -77,7 +88,7 @@ class Problem {
     }
 
     static getFullById(id) {
-        return Problem.getById(id)
+        return Problem.getRestrictedById(id)
             .then(result => {
                 if (result) {
                     return knex.select({ tagId: "tag.id", tagName: "tag.name", })
