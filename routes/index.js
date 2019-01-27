@@ -15,16 +15,16 @@ router.get('/index', function (req, res, next) {
     });
 });
 
-router.get('/problem/:id/pdf', function(req, res, next) {
-    Problem.getPdfById(req.params.id).then(result => res.json(result))
+router.get('/problem/:id.pdf', function(req, res, next) {
+    Problem.getPdfById(req.params.id).then(result => res.send(result))
 })
 
-router.get('/problem/:id/tex', function(req, res, next) {
-    Problem.getTexById(req.params.id).then(result => res.json(result))
+router.get('/problem/:id.tex', function(req, res, next) {
+    Problem.getTexById(req.params.id).then(result => res.send(result))
 })
 
-router.get('/problem/:id/medias', function(req, res, next) {
-    Problem.getMediasById(req.params.id).then(result => res.json(result))
+router.get('/problem/:id.zip', function(req, res, next) {
+    Problem.getMediasById(req.params.id).then(result => res.send(result))
 })
 
 router.get('/problem/:id', function(req, res, next) {
