@@ -5,7 +5,7 @@ WORKDIR /code
 # when we change our application's nodejs dependencies:
 ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
-RUN cd /tmp && npm install
+RUN cd /tmp && npm install --only=production
 RUN mkdir -p /opt/app && cp -a /tmp/node_modules /opt/app/
 WORKDIR /opt/app
 ADD . /opt/app
