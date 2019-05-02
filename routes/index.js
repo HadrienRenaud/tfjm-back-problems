@@ -1,10 +1,46 @@
 const express = require('express');
+const session = require("express-session");
 const bodyParser = require('body-parser');
-const router = express.Router();
+const passport = require("passport");
+const {Strategy} = require('passport-local');
 const {Problem} = require('../model/Problem');
 const {Tag} = require('../model/Tag');
 
+const adminUser = process.env.ADMIN_USER || "admin";
+const adminPasswd = process.env.ADMIN_PASSWD || "9GoepfS4ix32Y6aNqTVW3vGfRvXv36";
+const sessionSecret = process.env.SESSION_SECRET || "83Vdhg2JtLBQKJbXBrqYhRVR62ryrW";
+
+const router = express.Router();
 router.use(bodyParser.json());
+router.use(session({secret: sessionSecret}));
+router.use(passport.initialize());
+router.use(passport.session());
+
+passport.use(new Strategy((username, password, done) => {
+    if (username === adminUser && password === adminPasswd)
+        done(null, username);
+    else
+        done(null, false, {message: 'Incorrect username or password.'});
+    }
+));
+
+passport.serializeUser(function (user, done) {
+    done(null, user);
+});
+
+passport.deserializeUser(function (id, done) {
+    done(null, id);
+});
+
+router.post("/login", passport.authenticate('local'), function (req, res) {
+    res.status(200).send("Successfully authentified.");
+});
+
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated())
+        return next();
+    res.status(403).send();
+}
 
 /* GET home page. */
 router.get('/index', function (req, res, next) {
@@ -18,31 +54,31 @@ router.get('/index', function (req, res, next) {
     });
 });
 
-router.get('/problem/:id.pdf', function(req, res, next) {
+router.get('/problem/:id.pdf', function (req, res, next) {
     Problem.getPdfById(req.params.id).then(result => res.send(result))
 });
 
-router.get('/problem/:id.tex', function(req, res, next) {
+router.get('/problem/:id.tex', function (req, res, next) {
     Problem.getTexById(req.params.id).then(result => res.send(result))
 });
 
-router.get('/problem/:id.zip', function(req, res, next) {
+router.get('/problem/:id.zip', function (req, res, next) {
     Problem.getMediasById(req.params.id).then(result => res.send(result))
 });
 
-router.get('/problem/:id/image', function(req, res, next) {
+router.get('/problem/:id/image', function (req, res, next) {
     Problem.getImageById(req.params.id).then(result => res.send(result))
 });
 
-router.get('/problem/:id', function(req, res, next) {
+router.get('/problem/:id', function (req, res, next) {
     Problem.getFullById(req.params.id).then(result => res.json(result))
 });
 
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     res.send("Index on '/index'")
 });
 
-router.post('/problem', function(req, res) {
+router.post('/problem', isAuthenticated, function (req, res) {
     Problem.new(req.body)
         .then((result) => result ? res.status(201).send(JSON.stringify(result)) : res.status(400).send())
         .catch(err => {
@@ -51,7 +87,7 @@ router.post('/problem', function(req, res) {
         })
 });
 
-router.patch('/problem/:id', function(req, res) {
+router.patch('/problem/:id', isAuthenticated, function (req, res) {
     Problem.edit(req.params.id, req.body)
         .then((result) => result ? res.status(204).send() : res.status(400).send())
         .catch(err => {
@@ -60,7 +96,7 @@ router.patch('/problem/:id', function(req, res) {
         })
 });
 
-router.delete('/problem/:id', function(req, res) {
+router.delete('/problem/:id', isAuthenticated, function (req, res) {
     Problem.delete(req.params.id)
         .then((result => res.status(204).send()))
         .catch(err => {
@@ -69,7 +105,7 @@ router.delete('/problem/:id', function(req, res) {
         })
 });
 
-router.put('/problem/:id/tag', function (req, res) {
+router.put('/problem/:id/tag', isAuthenticated, function (req, res) {
     Problem.tagger(req.params.id, req.body)
         .then(result => res.status(200).send(result))
         .catch(err => {
@@ -78,7 +114,7 @@ router.put('/problem/:id/tag', function (req, res) {
         })
 });
 
-router.delete('/problem/:id/tag/:tag', function(req, res) {
+router.delete('/problem/:id/tag/:tag', isAuthenticated, function (req, res) {
     Problem.deleteTag(req.params.id, req.params.tag)
         .then(result => result ? res.status(204).send() : res.status(404).send())
         .catch(err => {
