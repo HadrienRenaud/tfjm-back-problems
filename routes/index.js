@@ -35,6 +35,9 @@ passport.deserializeUser(function (id, done) {
 router.post("/login", passport.authenticate('local'), function (req, res) {
     res.status(200).send("Successfully authentified.");
 });
+router.get("/login", isAuthenticated, function (req, res) {
+    res.status(200).send("Successfully authentified.");
+})
 
 function isAuthenticated(req, res, next) {
     if (req.isAuthenticated())
