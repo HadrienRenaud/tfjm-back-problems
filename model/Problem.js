@@ -1,5 +1,6 @@
 const {knex} = require('./db');
 const {Tag} = require('./Tag');
+const fs = require('fs');
 
 class Problem {
     constructor(id, name, description, pdf, tex, medias, image) {
@@ -58,6 +59,12 @@ class Problem {
                     return result[0];
                 else
                     return false
+            })
+            .then(image => {
+                if (image)
+                    return image;
+                else
+                    return fs.readFileSync(__dirname + '/defaultProblemImage.png');
             });
     }
 

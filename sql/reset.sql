@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`problems` (
   `image` MEDIUMBLOB NULL,
   `tex` VARCHAR(45) NULL,
   `medias` MEDIUMBLOB NULL,
+  `image` MEDIUMBLOB NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
