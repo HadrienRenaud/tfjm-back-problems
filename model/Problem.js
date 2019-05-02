@@ -110,7 +110,7 @@ class Problem {
         return Problem.getRestrictedById(id)
             .then(result => {
                 if (result) {
-                    return knex.select({ tagId: "tag.id", tagName: "tag.name", })
+                    return knex.select({tagId: "tag.id", tagName: "tag.name",})
                         .from('problem_has_tag').innerJoin('tag', 'problem_has_tag.fk_tag', 'tag.id')
                         .where('problem_has_tag.fk_problem', '=', result.id)
                         .then(rows => {
@@ -140,6 +140,75 @@ class Problem {
                     return result;
                 })
         })
+    }
+
+    static new(problem) {
+        return knex("problems").insert(problem)
+            .then(results => {
+                if (results.length === 1)
+                    return results[0];
+                else
+                    return results
+            })
+            .catch(error => {
+                console.error(error);
+                return false;
+            })
+    }
+
+    static edit(id, problem) {
+        return knex("problems")
+            .where("id", "=", id)
+            .update(problem)
+            .then(results => {
+                if (results.length === 1)
+                    return results[0];
+                else
+                    return results
+            })
+            .catch(error => {
+                console.error(error);
+                return false;
+            })
+    }
+
+    static delete(id) {
+        return knex("problems")
+            .where("id", "=", id)
+            .delete()
+            .then(result => !!result)
+            .catch(error => {
+                console.error(error);
+                return false;
+            })
+    }
+
+    static tagger(id, tag) {
+        if (!tag.id)
+            return Tag.getOrCreateByName(tag.name)
+                .then(createdTag => this.tagger(id, createdTag))
+        else
+            return knex("problem_has_tag").select("*")
+                .where("fk_problem", "=", id)
+                .andWhere("fk_tag", "=", tag.id)
+                .then(results => {
+                    if (results.length > 0)
+                        return true;
+                    else
+                        return knex("problem_has_tag").insert({
+                            fk_tag: tag.id,
+                            fk_problem: id
+                        })
+                            .then(result => !!result)
+                })
+    }
+
+    static deleteTag(problemId, tagId) {
+        return knex("problem_has_tag")
+            .where("fk_problem", "=", problemId)
+            .andWhere("fk_tag", "=", tagId)
+            .delete()
+            .then(result => !!result)
     }
 }
 
