@@ -34,7 +34,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`problems` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   `description` VARCHAR(100) NULL,
-  `pdf` MEDIUMBLOB NULL,
+  `pdf` VARCHAR(200) NULL,
+  `image` MEDIUMBLOB NULL,
   `tex` VARCHAR(45) NULL,
   `medias` MEDIUMBLOB NULL,
   PRIMARY KEY (`id`))

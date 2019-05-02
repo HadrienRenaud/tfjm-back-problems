@@ -2,13 +2,14 @@ const {knex} = require('./db');
 const {Tag} = require('./Tag');
 
 class Problem {
-    constructor(id, name, description, pdf, tex, medias) {
+    constructor(id, name, description, pdf, tex, medias, image) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.pdf = pdf;
         this.tex = tex;
         this.medias = medias;
+        this.image = image;
         this.tags = []
     }
 
@@ -18,7 +19,7 @@ class Problem {
 
     static getById(id) {
         return knex.select('*').from('problems').where('id', '=', id)
-            .map((row) => new Problem(row.id, row.name, row.description, row.pdf, row.tex, row.medias))
+            .map((row) => new Problem(row.id, row.name, row.description, row.pdf, row.tex, row.medias, row.image))
             .then(result => {
                 if (result.length > 0)
                     return result[0];
@@ -28,7 +29,7 @@ class Problem {
     }
 
     static getRestrictedById(id) {
-        return knex.select('*').from('problems').where('id', '=', id)
+        return knex.select('id', 'name', 'description').from('problems').where('id', '=', id)
             .map((row) => new Problem(row.id, row.name, row.description))
             .then(result => {
                 if (result.length > 0)
@@ -73,7 +74,7 @@ class Problem {
 
     static getAll() {
         return knex.select('*').from('problems').map(
-            (row) => new Problem(row.id, row.name, row.description, row.pdf, row.tex, row.medias));
+            (row) => new Problem(row.id, row.name, row.description, row.pdf, row.tex, row.medias, row.image));
     }
 
     static getAllRestricted() {
