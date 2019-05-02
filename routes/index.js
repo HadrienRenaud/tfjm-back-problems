@@ -27,6 +27,10 @@ router.get('/problem/:id.zip', function(req, res, next) {
     Problem.getMediasById(req.params.id).then(result => res.send(result))
 });
 
+router.get('/problem/:id/image', function(req, res, next) {
+    Problem.getImageById(req.params.id).then(result => res.send(result))
+})
+
 router.get('/problem/:id', function(req, res, next) {
     Problem.getFullById(req.params.id).then(result => res.json(result))
 });

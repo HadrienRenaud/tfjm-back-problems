@@ -50,6 +50,17 @@ class Problem {
             });
     }
 
+    static getImageById(id) {
+        return knex.select('image').from('problems').where('id', '=', id)
+            .map((row) => row.image)
+            .then(result => {
+                if (result.length > 0)
+                    return result[0];
+                else
+                    return false
+            });
+    }
+
     static getTexById(id) {
         return knex.select('*').from('problems').where('id', '=', id)
             .map((row) => row.tex)
