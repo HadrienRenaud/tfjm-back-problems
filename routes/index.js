@@ -12,7 +12,7 @@ const sessionSecret = process.env.SESSION_SECRET || "83Vdhg2JtLBQKJbXBrqYhRVR62r
 
 const router = express.Router();
 router.use(bodyParser.json());
-router.use(session({secret: sessionSecret}));
+router.use(session({secret: sessionSecret, resave: false, saveUninitialized: false}));
 router.use(passport.initialize());
 router.use(passport.session());
 
