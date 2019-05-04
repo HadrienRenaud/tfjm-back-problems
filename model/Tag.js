@@ -12,22 +12,35 @@ class Tag {
     }
 
     static getById(id) {
-        return knex.select('*').from('tag').where("id", '=', id).map((row) => new Tag(row.id, row.name))
+        return knex.select('*').from('tag').where("id", '=', id)
+            .map((row) => new Tag(row.id, row.name))
+            .then(results => {
+                if (results)
+                    return results[0];
+                else
+                    return false
+            })
     }
 
     static getByName(name) {
-        return knex.select('*').from('tag').where("name", "=", name).map((row) => new Tag(row.id, row.name))
+        return knex.select('*').from('tag').where("name", "=", name)
+            .map((row) => new Tag(row.id, row.name))
+            .then(results => {
+                if (results)
+                    return results[0];
+                else
+                    return false
+            })
     }
 
     static getOrCreateByName(name) {
         return this.getByName(name)
-            .then(results => {
-                if (results.length === 0) {
+            .then(result => {
+                if (!result) {
                     return knex("tag").insert({name: name})
                         .then(() => this.getByName(name))
-                        .then(results => results[0])
                 } else
-                    return results[0]
+                    return result
             })
     }
 }

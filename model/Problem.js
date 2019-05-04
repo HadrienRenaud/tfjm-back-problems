@@ -172,6 +172,13 @@ class Problem {
             })
     }
 
+    static deleteWithProtection(id){
+        return knex("problem_has_tag")
+            .where("fk_problem", "=", id)
+            .delete()
+            .then(() => Problem.delete(id))
+    }
+
     static delete(id) {
         return knex("problems")
             .where("id", "=", id)
@@ -193,13 +200,16 @@ class Problem {
                 .andWhere("fk_tag", "=", tag.id)
                 .then(results => {
                     if (results.length > 0)
-                        return true;
+                        return Tag.getById(tag.id);
                     else
                         return knex("problem_has_tag").insert({
                             fk_tag: tag.id,
                             fk_problem: id
                         })
-                            .then(result => !!result)
+                            .then(results => {
+                                if (results)
+                                    return Tag.getById(tag.id)
+                            })
                 })
     }
 

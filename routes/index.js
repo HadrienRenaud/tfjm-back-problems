@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require("express-session");
 const bodyParser = require('body-parser');
+const cors = require("cors");
 const passport = require("passport");
 const {Strategy} = require('passport-local');
 const {Problem} = require('../model/Problem');
@@ -9,18 +10,27 @@ const {Tag} = require('../model/Tag');
 const adminUser = process.env.ADMIN_USER || "admin";
 const adminPasswd = process.env.ADMIN_PASSWD || "9GoepfS4ix32Y6aNqTVW3vGfRvXv36";
 const sessionSecret = process.env.SESSION_SECRET || "83Vdhg2JtLBQKJbXBrqYhRVR62ryrW";
+const frontURL = process.env.FRONT_URL || "http://localhost:3001";
 
 const router = express.Router();
+
+const corsOptions = {
+    origin: true,
+    credentials: true,
+    preflightContinue: true,
+};
+
+router.use(cors(corsOptions));
 router.use(bodyParser.json());
 router.use(session({secret: sessionSecret, resave: false, saveUninitialized: false}));
 router.use(passport.initialize());
 router.use(passport.session());
 
 passport.use(new Strategy((username, password, done) => {
-    if (username === adminUser && password === adminPasswd)
-        done(null, username);
-    else
-        done(null, false, {message: 'Incorrect username or password.'});
+        if (username === adminUser && password === adminPasswd)
+            done(null, username);
+        else
+            done(null, false, {message: 'Incorrect username or password.'});
     }
 ));
 
@@ -55,6 +65,10 @@ router.get('/index', function (req, res, next) {
             })
         )
     });
+});
+
+router.get('/tags', function (req, res) {
+    Tag.getAll().then(result => res.send(result))
 });
 
 router.get('/problem/:id.pdf', function (req, res, next) {
@@ -100,7 +114,7 @@ router.patch('/problem/:id', isAuthenticated, function (req, res) {
 });
 
 router.delete('/problem/:id', isAuthenticated, function (req, res) {
-    Problem.delete(req.params.id)
+    Problem.deleteWithProtection(req.params.id)
         .then((result => res.status(204).send()))
         .catch(err => {
             console.error(err);
