@@ -97,7 +97,10 @@ router.get('/', function (req, res, next) {
 
 router.post('/problem', isAuthenticated, function (req, res) {
     Problem.new(req.body)
-        .then((result) => result ? res.status(201).send(JSON.stringify(result)) : res.status(400).send())
+        .then((result) => result
+            ? Problem.getFullById(result)
+                .then(result => res.status(201).send(JSON.stringify(result)))
+            : res.status(400).send())
         .catch(err => {
             console.error(err);
             res.status(500).send("Internal error while creating the Problem. The problem might or might not have been created.")
